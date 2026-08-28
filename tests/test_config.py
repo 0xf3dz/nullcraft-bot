@@ -25,9 +25,11 @@ class SettingsTests(unittest.TestCase):
         self.assertIsNone(settings.telegram_bot_token)
 
     def test_bot_mode_rejects_a_missing_telegram_token(self):
-        with patch.dict(os.environ, {}, clear=True):
-            with self.assertRaisesRegex(ConfigurationError, "TELEGRAM_BOT_TOKEN"):
-                Settings.from_env()
+        with (
+            patch.dict(os.environ, {}, clear=True),
+            self.assertRaisesRegex(ConfigurationError, "TELEGRAM_BOT_TOKEN"),
+        ):
+            Settings.from_env()
 
     def test_default_threshold_cannot_be_below_the_minimum(self):
         environment = {
@@ -35,9 +37,11 @@ class SettingsTests(unittest.TestCase):
             "NULLCRAFT_DEFAULT_THRESHOLD_USD": "99",
             "NULLCRAFT_MINIMUM_THRESHOLD_USD": "100",
         }
-        with patch.dict(os.environ, environment, clear=True):
-            with self.assertRaisesRegex(ConfigurationError, "cannot be below"):
-                Settings.from_env()
+        with (
+            patch.dict(os.environ, environment, clear=True),
+            self.assertRaisesRegex(ConfigurationError, "cannot be below"),
+        ):
+            Settings.from_env()
 
 
 if __name__ == "__main__":

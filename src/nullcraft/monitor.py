@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import time
+from contextlib import suppress
 from dataclasses import dataclass
 from typing import Protocol
 
@@ -133,10 +134,8 @@ class TradeMonitor:
                     consecutive_errors = 0
                     delay = self._poll_interval_seconds
 
-                try:
+                with suppress(TimeoutError):
                     await asyncio.wait_for(stop_event.wait(), timeout=delay)
-                except TimeoutError:
-                    pass
         finally:
             self._running = False
             logger.info("Trade monitor stopped")

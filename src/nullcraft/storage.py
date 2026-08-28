@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sqlite3
 import time
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 
 _CENTS = Decimal("0.01")
@@ -95,9 +95,7 @@ class SubscriptionStore:
         return cents_to_usd(row[0]) if row else None
 
     def minimum_threshold(self) -> Decimal | None:
-        row = self._connection.execute(
-            "SELECT MIN(threshold_cents) FROM subscriptions"
-        ).fetchone()
+        row = self._connection.execute("SELECT MIN(threshold_cents) FROM subscriptions").fetchone()
         if row is None or row[0] is None:
             return None
         return cents_to_usd(row[0])
@@ -121,7 +119,13 @@ class SubscriptionStore:
         ).fetchone()
         return row is not None
 
-    def record_delivery(self, trade_id: str, chat_id: int, *, delivered_at: int | None = None) -> None:
+    def record_delivery(
+        self,
+        trade_id: str,
+        chat_id: int,
+        *,
+        delivered_at: int | None = None,
+    ) -> None:
         timestamp = delivered_at if delivered_at is not None else int(time.time())
         with self._connection:
             self._connection.execute(

@@ -92,6 +92,10 @@ class PolymarketClient:
             try:
                 payload = await response.json()
             except (aiohttp.ContentTypeError, ValueError) as error:
-                raise DataAPIError("Polymarket Data API health check returned invalid JSON") from error
+                raise DataAPIError(
+                    "Polymarket Data API health check returned invalid JSON"
+                ) from error
             if not isinstance(payload, list):
-                raise DataAPIError("Polymarket Data API health check returned an unexpected response")
+                raise DataAPIError(
+                    "Polymarket Data API health check returned an unexpected response"
+                )
