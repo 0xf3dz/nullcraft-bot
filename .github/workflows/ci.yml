@@ -31,4 +31,7 @@ jobs:
         run: uvx ruff check .
 
       - name: Audit locked dependencies
-        run: uvx pip-audit --locked .
+        run: |
+          uv export --locked --no-dev --no-emit-project \
+            --format requirements-txt --output-file /tmp/nullcraft-requirements.txt
+          uvx pip-audit --requirement /tmp/nullcraft-requirements.txt

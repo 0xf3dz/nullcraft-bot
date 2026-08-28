@@ -125,7 +125,9 @@ uvx ruff check .
 Audit the locked dependencies.
 
 ```bash
-uvx pip-audit .
+uv export --locked --no-dev --no-emit-project \
+  --format requirements-txt --output-file /tmp/nullcraft-requirements.txt
+uvx pip-audit --requirement /tmp/nullcraft-requirements.txt
 ```
 
 ## Data sources
