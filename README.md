@@ -92,7 +92,7 @@ For example, `/setthreshold 25000` sends alerts for trades worth at least $25,00
 | `NULLCRAFT_DATA_API_URL` | `https://data-api.polymarket.com` | Data API base URL |
 | `NULLCRAFT_LOG_LEVEL` | `INFO` | Python log level |
 
-The default trade threshold limits the Data API result size. If the API returns 10,000 trades in one window, Nullcraft stops that poll and asks you to increase the threshold.
+The default trade threshold limits the Data API result size. If the API returns 1,000 trades in one window, Nullcraft stops that poll and asks you to increase the threshold.
 
 ## Architecture
 
