@@ -1,8 +1,8 @@
 # Nullcraft Bot
 
-Nullcraft sends Telegram alerts for large Polymarket trades. Each chat can set a separate United States dollar threshold.
+Nullcraft sends Telegram alerts for large Polymarket trades. Each chat can set a separate USD threshold.
 
-This repository replaces the inactive `nullcraft` implementation. It uses the current public Polymarket Data API and needs no wallet key.
+This repository is a refactored version of an older scrappy monitor I used to use. It uses the current public Polymarket Data API and needs no wallet key.
 
 ## Features
 
