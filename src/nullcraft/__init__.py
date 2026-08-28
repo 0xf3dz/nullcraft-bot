@@ -1,0 +1,1 @@
+"""Nullcraft Polymarket trade monitor."""
