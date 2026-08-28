@@ -83,6 +83,21 @@ class PolymarketClientTests(unittest.IsolatedAsyncioTestCase):
 
         self.assertEqual(len(trades), 1)
 
+    async def test_records_outside_the_requested_window_are_removed(self):
+        old = trade_record(timestamp=80, transaction_hash="0x" + "0" * 64)
+        current = trade_record(timestamp=100, transaction_hash="0x" + "1" * 64)
+        future = trade_record(timestamp=120, transaction_hash="0x" + "2" * 64)
+        session = FakeSession([FakeResponse(payload=[future, current, old])])
+        client = PolymarketClient(session, "https://data.example")
+
+        trades = await client.fetch_trades(
+            start_timestamp=90,
+            end_timestamp=110,
+            minimum_notional_usd=Decimal("100"),
+        )
+
+        self.assertEqual([trade.timestamp for trade in trades], [100])
+
     async def test_http_error_preserves_the_status(self):
         session = FakeSession([FakeResponse(status=429, body="rate limited")])
         client = PolymarketClient(session, "https://data.example")

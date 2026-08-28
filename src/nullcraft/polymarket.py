@@ -28,7 +28,7 @@ class PolymarketClient:
         start_timestamp: int,
         minimum_notional_usd: Decimal,
         end_timestamp: int | None = None,
-        limit: int = 10_000,
+        limit: int = 1_000,
     ) -> tuple[Trade, ...]:
         if start_timestamp < 0:
             raise ValueError("start_timestamp cannot be negative")
@@ -36,6 +36,8 @@ class PolymarketClient:
             raise ValueError("minimum_notional_usd cannot be negative")
         if limit < 1 or limit > 10_000:
             raise ValueError("limit must be between 1 and 10000")
+        if end_timestamp is not None and end_timestamp < start_timestamp:
+            raise ValueError("end_timestamp cannot be below start_timestamp")
 
         parameters: dict[str, str | int] = {
             "start": start_timestamp,
@@ -61,10 +63,6 @@ class PolymarketClient:
 
         if not isinstance(payload, list):
             raise DataAPIError("Polymarket Data API returned an unexpected response")
-        if len(payload) >= limit:
-            raise DataAPIError(
-                "Polymarket Data API result reached the request limit; increase the trade threshold"
-            )
 
         trades: list[Trade] = []
         for index, record in enumerate(payload):
@@ -76,6 +74,20 @@ class PolymarketClient:
             except TradeDataError as error:
                 logger.warning("Ignored invalid trade at response index %d: %s", index, error)
 
+        if len(payload) >= limit and (
+            not trades or min(trade.timestamp for trade in trades) >= start_timestamp
+        ):
+            raise DataAPIError(
+                "Polymarket Data API result reached the request limit; "
+                "increase the trade threshold"
+            )
+
+        trades = [
+            trade
+            for trade in trades
+            if trade.timestamp >= start_timestamp
+            and (end_timestamp is None or trade.timestamp <= end_timestamp)
+        ]
         trades.sort(key=lambda trade: (trade.timestamp, trade.identity))
         return tuple(trades)
 
